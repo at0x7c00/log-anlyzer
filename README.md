@@ -31,7 +31,9 @@
 ...
 ```
 下面的代码实现对访问量的统计，输出每分钟访问总数,并且按访问数排序：
-
+工具以空格将一行分为多个列，select、groupBy和processor中的“3”表示一行中的第4列（从0开始)，即日期值。
+select中的“count”是求值函数，其他还是还支持：sum、max、min和avg。
+orderBy中的“1”表示select中的第2列（也是从0开始）。
 ```java
 	@Test
 	public void testCount()throws Exception{
