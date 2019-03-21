@@ -46,8 +46,7 @@
 ## 初始化 ##
 主要工具类`FileScaner`,可以同时指定由逗号分隔的多个路径，并且支持通配符：
 ```java
-scaner = new FileScaner(
-				"/usr/local/tomcat/logs/localhost_access_log*.txt,/usr/local/tomcat2/logs/localhost_access_log*.txt");
+scaner = new FileScaner("/usr/local/tomcat/logs/localhost_access_log*.txt,/usr/local/tomcat2/logs/localhost_access_log*.txt");
 ```
 ## 字符匹配 ##
 用where查询状态码为404的访问记录：
