@@ -22,7 +22,7 @@ public class AnalyzerTest {
 	@Before
 	public void init(){
 		scaner = new FileScaner(
-				"D:\\项目日志分析\\dongxu\\localhost_access_log*.txt");
+				"/usr/local/tomcat/logs/localhost_access_log*.txt");
 	}
 	
 	
