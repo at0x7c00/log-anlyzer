@@ -44,6 +44,8 @@ public class FileScaner {
 	private Integer maxIndex = 0;
 	boolean hasFunction;
 	
+	List<List<Object>> result = null;
+	
 	public FileScaner(String fileName) {
 		if(fileName.contains(",")){
 			for(String fn : fileName.split(",")){
@@ -167,7 +169,7 @@ public class FileScaner {
 			br.close();
 		}
 		Set<LineResultBean> lineResultSet = reduce(mapping);
-		List<List<Object>> result = new ArrayList<List<Object>>(lineResultSet.size());
+		result = new ArrayList<List<Object>>(lineResultSet.size());
 		int count = 0;
 		for(LineResultBean lineBean : lineResultSet){
 			result.add(lineBean.getLineProps());
@@ -178,6 +180,16 @@ public class FileScaner {
 			}
 		}
 		return result;
+	}
+	
+	public void print(){
+		if(result==null || result.isEmpty()){
+			System.out.println("no record found.");
+			return;
+		}
+		for(List<Object> l : result){
+			System.out.println(l);
+		}
 	}
 
 	private void init() throws Exception{

@@ -10,31 +10,135 @@ import me.huqiao.loganlyzer.main.FileScaner;
 import me.huqiao.loganlyzer.orderby.OrderBy;
 import me.huqiao.loganlyzer.util.DateUtil;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class AnalyzerTest {
 	
 	static Logger log = Logger.getLogger("AnalyzerTest");
+
+	FileScaner scaner = null;
+
+	@Before
+	public void init(){
+		scaner = new FileScaner(
+				"D:\\项目日志分析\\dongxu\\localhost_access_log*.txt");
+	}
+	
+	
+	@Test
+	public void testWhere()throws Exception{
+		scaner.select("0,3,6,8")
+		.where(Conditions.contains("8", "404"))
+		.list();
+		scaner.print();
+	}
+	
+	@Test
+	public void testMoreCondition()throws Exception{
+		scaner.select("0,3,6,8")
+		.where(Conditions.or(Conditions.eq("8", "404"),Conditions.eq("8", "302")))
+		.list();
+		scaner.print();
+	}
 	
 	@Test
 	public void testCount()throws Exception{
-		FileScaner scaner = new FileScaner(
-				"D:\\****\\localhost_access_*****.txt");
-		List<List<Object>> list =scaner.select("3,count(1)")
-				 .groupBy("3")
-				 .processor(3, new AttPreProcessor() {
-					@Override
-					public String process(String att) {
-						Date date = DateUtil.parse(att);
-						return DateUtil.format(date, "yyyy-MM-dd HH:mm");
-					}
-				  })
-				 .orderBy(OrderBy.desc(1))
-				 .limit(10)
-				.list();
-		for(List<Object> l : list){
-			System.out.println(l);
-		}
+		scaner.select("8,count(1)")
+		.where(Conditions.contains("8", "404"))
+		.list();
+		scaner.print();
 	}
+	
+	@Test
+	public void testAttPreProcessor()throws Exception{
+		AttPreProcessor processor = new AttPreProcessor() {
+			@Override
+			public String process(String att) {
+				att = att.substring(1);
+				att = att.replaceAll("Mar", "03");
+				Date date = DateUtil.parse(att);
+				if(date==null){
+					return "";
+				}
+				return DateUtil.format(date, "yyyy-MM-dd HH:mm");
+			}
+		};
+		scaner.select("0,3,6")
+		.processor(3, processor)
+		.where(Conditions.contains("8", "404"))
+		.list();
+		scaner.print();
+	}
+	
+	
+	@Test
+	public void testGroupBy()throws Exception{
+		AttPreProcessor processor = new AttPreProcessor() {
+			@Override
+			public String process(String att) {
+				att = att.substring(1);
+				att = att.replaceAll("Mar", "03");
+				Date date = DateUtil.parse(att);
+				if(date==null){
+					return "";
+				}
+				return DateUtil.format(date, "yyyy-MM-dd HH:mm");
+			}
+		};
+		scaner.select("3,count(1)")
+		.processor(3, processor)
+		.groupBy("0")
+		.list();
+		scaner.print();
+	}
+	
+	
+	@Test
+	public void testOrderBy()throws Exception{
+		AttPreProcessor processor = new AttPreProcessor() {
+			@Override
+			public String process(String att) {
+				att = att.substring(1);
+				att = att.replaceAll("Mar", "03");
+				Date date = DateUtil.parse(att);
+				if(date==null){
+					return "";
+				}
+				return DateUtil.format(date, "yyyy-MM-dd HH:mm");
+			}
+		};
+		scaner.select("3,count(1)")
+		.processor(3, processor)
+		.groupBy("0")
+		.orderBy(OrderBy.desc(1))
+		.list();
+		scaner.print();
+	}
+	
+	@Test
+	public void testLimit()throws Exception{
+		AttPreProcessor processor = new AttPreProcessor() {
+			@Override
+			public String process(String att) {
+				att = att.substring(1);
+				att = att.replaceAll("Mar", "03");
+				Date date = DateUtil.parse(att);
+				if(date==null){
+					return "";
+				}
+				return DateUtil.format(date, "yyyy-MM-dd HH:mm");
+			}
+		};
+		scaner.select("3,count(1)")
+		.processor(3, processor)
+		.groupBy("0")
+		.orderBy(OrderBy.desc(1))
+		.limit(10)
+		.list();
+		scaner.print();
+	}
+	
+	
 
 }
