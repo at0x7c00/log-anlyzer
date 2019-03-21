@@ -117,6 +117,7 @@ scaner = new FileScaner("/usr/local/tomcat/logs/localhost_access_log*.txt,/usr/l
 ```
 ## 分组 ##
 使用groupBy来进行分组统计。
+
 **注意：** groupBy中的索引值是select中的列的的索引值。比如下面的代码中，select的值是“3,count(1)"，一个选择了2列，需要以第1列排序，所以需要`groupBy("0")`。
 ```java
 	@Test
