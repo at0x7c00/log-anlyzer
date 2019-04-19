@@ -22,14 +22,15 @@ public class AnalyzerTest {
 	@Before
 	public void init(){
 		scaner = new FileScaner(
-				"/usr/local/tomcat/logs/localhost_access_log*.txt");
+				"D:\\项目日志分析\\dongxu\\localhost_access_log.2019-03-21.txt");
 	}
 	
 	
 	@Test
 	public void testWhere()throws Exception{
-		scaner.select("0,3,6,8")
-		.where(Conditions.contains("8", "404"))
+		scaner.select("count(1)")
+		.where(Conditions.and(Conditions.contains("6", "service/ws/WsService?"),
+				Conditions.eq("8", "200")))
 		.list();
 		scaner.print();
 	}
