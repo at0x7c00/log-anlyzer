@@ -12,7 +12,7 @@ public class LineResultBean implements Comparable<LineResultBean> {
 	private List<Comparable<?>> lineProps = new ArrayList<Comparable<?>>();
 	private List<OrderBy> orderBys;
 	
-	public LineResultBean(Integer lineNo,List<OrderBy> orderBys){
+	public LineResultBean(Integer lineNo, List<OrderBy> orderBys){
 		this.lineNo = lineNo;
 		this.orderBys = orderBys;
  	}

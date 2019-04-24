@@ -3,7 +3,7 @@ package me.huqiao.loganlyzer.main;
 public class SelectedProp {
 
 	private Integer index;
-	private String function;//ÔİÊ±Ö»Ö§³ÖÒ»¼¶º¯Êıµ÷ÓÃ
+	private String function;//æš‚æ—¶åªæ”¯æŒä¸€çº§å‡½æ•°è°ƒç”¨
 	public Integer getIndex() {
 		return index;
 	}

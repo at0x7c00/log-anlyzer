@@ -7,12 +7,8 @@ import java.util.Stack;
 import me.huqiao.loganlyzer.querylanguage.exception.InvalidQueryStringException;
 
 /**
- * xxx_
- * 'xxx'
- * "xxx"
- * 'x"xxx"xx'
- * 'xx\'xx'
- * 'xx"xx'
+ * è§£æç±»ä¼¼å¦‚ä¸‹æ ¼å¼çš„æŸ¥è¯¢å­—ç¬¦ä¸²ä¸ºå•è¯ç»„
+ * select * from sys_user where username like '"122%' and org like "fdsf' xxxx ' ad"  and (email>='zoozle@qq.com' or age!='12')
  */
 public class TextNodeParser {
 	
@@ -28,7 +24,7 @@ public class TextNodeParser {
 		char[] chars = str.toCharArray();
 		for(int i = 0;i<chars.length;i++){
 			char c = chars[i];
-			//ÌØÊâ×Ö·û:¿Õ¸ñ¡¢µ¥ÒıºÅºÍË«ÒıºÅ
+			//ç‰¹æ®Šå­—ç¬¦:ç©ºæ ¼ã€å•å¼•å·å’ŒåŒå¼•å·
 			
 			if(!stack.isEmpty()){
 				char topc = stack.peek();
@@ -38,14 +34,14 @@ public class TextNodeParser {
 			}
 			
 			if((c == ' ' || c == '\'' || c == '"') && !isInString() && dataBuff.length()>0){
-				//Éú³ÉÒ»¸öµ¥´Ê
+				//ç”Ÿæˆä¸€ä¸ªå•è¯
 				resList.add(dataBuff.toString());
 				dataBuff = new StringBuffer();
 				continue;
 			}else if(isCompareSymbol(c)){
 				if(!isInString()){
 					if(dataBuff.length()>0){
-						//Éú³ÉÒ»¸öµ¥´Ê
+						//ç”Ÿæˆä¸€ä¸ªå•è¯
 						resList.add(dataBuff.toString());
 						dataBuff = new StringBuffer();
 					}
@@ -66,7 +62,7 @@ public class TextNodeParser {
 					continue;
 				}
 			}else if (!isInString() && c == ' '){
-				//ºöÂÔ¿Õ°××Ö·û
+				//å¿½ç•¥ç©ºç™½å­—ç¬¦
 				continue;
 			}
 			
@@ -77,7 +73,7 @@ public class TextNodeParser {
 			}
 			
 		}
-		//Î´½áÊøµÄ×Ö·û´®£¬±¨´í
+		//æœªç»“æŸçš„å­—ç¬¦ä¸²ï¼ŒæŠ¥é”™
 		if(isInString()){
 			String near = dataBuff.toString();
 			
@@ -127,8 +123,5 @@ public class TextNodeParser {
 		return resList;
 	}
 
-	public static void main(String[] args) throws InvalidQueryStringException {
-		
-	}
 	
 }

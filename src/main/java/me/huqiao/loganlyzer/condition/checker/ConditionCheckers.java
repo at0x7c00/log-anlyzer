@@ -6,10 +6,10 @@ import java.util.Map;
 import me.huqiao.loganlyzer.enumtype.CompareType;
 
 public abstract class ConditionCheckers {
-	
+
 	static Map<CompareType,ConditionChecker> map = new HashMap<CompareType,ConditionChecker>();
 	static {
-		
+
 		map.put(CompareType.between, new BetweenChecker());
 		map.put(CompareType.contains, new ContainsChecker());
 		map.put(CompareType.endwith, new EndwithChecker());
@@ -27,5 +27,5 @@ public abstract class ConditionCheckers {
 	public static ConditionChecker getChecker(CompareType type){
 		return map.get(type);
 	}
-	
+
 }

@@ -12,17 +12,17 @@ public class BetweenChecker implements ConditionChecker {
 		if(value == null){
 			return false;
 		}
-		//×Ö·û
+		//å­—ç¬¦
 		if(pattern instanceof String){
 			return value.compareTo((String)pattern) > 0 && value.compareTo((String)pattern2) <= 0;  
 		}
-		//Êý×Ö
+		//æ•°å­—
 		if(pattern instanceof Number){
 			Double dValue = Double.parseDouble(value);
 			return dValue.compareTo(((Number)pattern).doubleValue()) >= 0
 			&& dValue.compareTo(((Number)pattern2).doubleValue()) >= 0;
 		}
-		//ÈÕÆÚ
+		//æ—¥æœŸ
 		if(pattern instanceof Date){
 			Date date = DateUtil.parse(value);
 			return date.compareTo((Date)pattern) >=0 && 
