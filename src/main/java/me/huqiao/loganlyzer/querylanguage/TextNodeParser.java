@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import me.huqiao.loganlyzer.querylanguage.exception.InvalidQueryStringException;
+
 /**
  * xxx_
  * 'xxx'
@@ -22,55 +24,111 @@ public class TextNodeParser {
 		this.str = str;
 	}
 	
-	public void doParse(){
+	public void doParse() throws InvalidQueryStringException{
 		char[] chars = str.toCharArray();
 		for(int i = 0;i<chars.length;i++){
 			char c = chars[i];
-			char topC = stack.peek();
+			//特殊字符:空格、单引号和双引号
+			
+			if(!stack.isEmpty()){
+				char topc = stack.peek();
+				if((c == '\'' || c == '"') && topc == c){
+					stack.pop();
+				}
+			}
+			
+			if((c == ' ' || c == '\'' || c == '"') && !isInString() && dataBuff.length()>0){
+				//生成一个单词
+				resList.add(dataBuff.toString());
+				dataBuff = new StringBuffer();
+				continue;
+			}else if(isCompareSymbol(c)){
+				if(!isInString()){
+					if(dataBuff.length()>0){
+						//生成一个单词
+						resList.add(dataBuff.toString());
+						dataBuff = new StringBuffer();
+					}
+					int lastIdx =  resList.size()-1;
+					String preNode = resList.get(lastIdx);
+					
+					if(isCompareSymbol(preNode.charAt(0))){
+						resList.remove(lastIdx);
+						resList.add(preNode + c);
+					}else{
+						resList.add(c+"");
+					}
+					continue;
+				}
+			}else if(isBracketsSymbol(c)){
+				if(!isInString()){
+					resList.add(c+"");
+					continue;
+				}
+			}else if (!isInString() && c == ' '){
+				//忽略空白字符
+				continue;
+			}
+			
+			if(stack.isEmpty() && isQuotationMarks(c)){
+				stack.push(c);
+			}else{
+				dataBuff.append(c);
+			}
+			
 		}
+		//未结束的字符串，报错
+		if(isInString()){
+			String near = dataBuff.toString();
+			
+			int index = str.indexOf(near);
+			StringBuffer sb = new StringBuffer();
+			sb.append("Invalid query string:\r\n")
+			.append(str)
+			.append("\r\n");
+			for(int i = 0;i<index;i++){
+				sb.append(" ");
+			}
+			sb.append("\\\r\n");
+			for(int i = 0;i<index;i++){
+				sb.append(" ");
+			}
+			sb.append(" \\_ ");
+			sb.append("this is unbalanced (expect for " + stack.peek() + ")");
+			throw new InvalidQueryStringException(sb.toString());
+		}
+		
 		if(dataBuff.length()>0){
 			resList.add(dataBuff.toString());
 		}
+		
 	}
 	
+	private boolean isInString(){
+		return !stack.isEmpty();
+	}
 	
-	private void invoedToStack(char c) {
-		if(c!='\'' && c != '"' && c != '\\'){
-			return;
-		}
-		if(stack.isEmpty()){
-			stack.push(c);
-			System.out.println(">"+stack);
-		}else{
-			char xc = stack.peek();
-			if(xc == c){
-				stack.pop();
-				System.out.println(">"+stack);
-			}else{
-				stack.push(c);
-				System.out.println(">"+stack);
-			}
-		}
+	private boolean isCompareSymbol(char c) {
+		return  c == '>' 
+				|| c == '<'
+				|| c == '!'
+				|| c == '=';
+	}
+	private boolean isBracketsSymbol(char c) {
+		return  c == ')' 
+				|| c == '(';
 	}
 
-	private boolean isWordEnded(char c) {
-		if(stack.isEmpty()){
-			return c == ' ' || c == '\'' || c == '"';
-		}
-		return c == ' ' && dataBuff.length()!=0;
+	private boolean isQuotationMarks(char c){
+		return (c == '\'' || c == '"');
 	}
-
+	
 	public List<String> getTextList() {
 		return resList;
 	}
 
-	public static void main(String[] args) {
-		String str = "select * from sys_user where username like '122%'and email is not null;";
-		TextNodeParser p = new TextNodeParser(str);
-		p.doParse();
-		for(String s : p.getTextList()){
-			System.out.println("["+s+"]");
-		}
+	public static void main(String[] args) throws InvalidQueryStringException {
+		
 	}
 	
 }

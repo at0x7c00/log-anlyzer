@@ -3,8 +3,6 @@
   <groupId>me.huqiao</groupId>
   <artifactId>log-anlyzer</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
-  
 	  <dependencies>
 		  <dependency>
 		    <groupId>junit</groupId>
