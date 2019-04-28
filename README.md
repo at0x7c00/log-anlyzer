@@ -264,7 +264,7 @@ limit 10
 * [TextNodeParser](./src/main/java/me/huqiao/loganlyzer/querylanguage/TextNodeParser.java)复制将字符串分解为word组，重点是支持引号（单引号或双引号），引号内的字符会被当成一个word
 * [LogQueryLanguageParserStateMachine](./src/main/java/me/huqiao/loganlyzer/querylanguage/LogQueryLanguageParserStateMachine.java)状态机中包含一些节点，这些节点之间的关系已经在[StatusNodeFactory](./src/main/java/me/huqiao/loganlyzer/querylanguage/statusnode/StatusNodeFactory.java)中预定义好了
 * 遍历TextNodeParser生成的word组，feed状态机，状态机会自动切换状态节点。[每个节点](./src/main/java/me/huqiao/loganlyzer/querylanguage/statusnode)也会根据自己身的情况来解析当前的word
-* [AbstractNode](./src/main/java/me/huqiao/loganlyzer/querylanguage/statusnode/StatusNodeFactory.java)是所有节点的基类，实现了大部分通用功能，包括判断是否是关键字、以及一些通用的断言
+* [AbstractNode](./src/main/java/me/huqiao/loganlyzer/querylanguage/statemachine/AbstractNode.java)是所有节点的基类，实现了大部分通用功能，包括判断是否是关键字、以及一些通用的断言
 
 详见[源码](./src/main/java/me/huqiao/loganlyzer/querylanguage)。
 
