@@ -249,14 +249,15 @@ orderBy中可以有多个排序，排序的index和groupBy同理，是只选择�
 [2019-03-15 16:32, 14.0]
 ```
 
-## LQL：查询语句 ##
+## Log Query Language(LQL),日志查询语句 ##
 例如：
 ```bash
 select 0,2,3 
 from 'localhost_access_log.txt,localhost_access_log02.txt'
 where 0 eq 'x' and (2 eq 'x'  or 3 eq 'x') 
 order by 0 desc, 1 asc 
-group by 0 limit 10
+group by 0 
+limit 10
 ```
 
 实现原理：
