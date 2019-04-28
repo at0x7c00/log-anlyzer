@@ -4,102 +4,113 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import me.huqiao.loganlyzer.querylanguage.exception.InvalidQueryStringException;
+import me.huqiao.loganlyzer.querylanguage.exception.ExceptionUtil;
+import me.huqiao.loganlyzer.querylanguage.exception.InvalidLQLException;
 
 /**
- * 解析类似如下格式的查询字符串为单词组
+ * 解析类似如下格式的查询字符串为单词(word)组
  * select * from sys_user where username like '"122%' and org like "fdsf' xxxx ' ad"  and (email>='zoozle@qq.com' or age!='12')
+ * 1)单引号或双引号内的所有内容为一个word
+ * 2)比较符为一个word，多个临近的比较符会合并为一个word
+ * 3)括弧单独为一个word
+ * 4)忽略非字符串以内的所有空白符(空格/制表符/换行/回车)
  */
 public class TextNodeParser {
-	
+	/**
+	 * 字符串栈，栈非空时，表示字符位于字符串中
+	 */
 	private Stack<Character> stack = new Stack<Character>();
-	private List<String> resList = new ArrayList<String>();
-	private String str;
+	/**
+	 * 解析的结果
+	 */
+	private List<String> wordList = new ArrayList<String>();
+	/**
+	 * 待解析的源字符串
+	 */
+	private String lql;
+	/**
+	 * 单词临时存放位置
+	 */
 	private StringBuffer dataBuff = new StringBuffer();
-	public TextNodeParser(String str){
-		this.str = str;
+	public TextNodeParser(String lql){
+		this.lql = lql;
 	}
 	
-	public void doParse() throws InvalidQueryStringException{
-		char[] chars = str.toCharArray();
+	public void doParse() throws InvalidLQLException {
+		char[] chars = lql.toCharArray();
 		for(int i = 0;i<chars.length;i++){
 			char c = chars[i];
-			//特殊字符:空格、单引号和双引号
-			
+
+			//如果是引号，且与栈中的引号成对，则出栈（表示字符串结束了）
 			if(!stack.isEmpty()){
 				char topc = stack.peek();
-				if((c == '\'' || c == '"') && topc == c){
+				if(isQuotationMarks(c) && topc == c){
 					stack.pop();
 				}
 			}
-			
+
+			//空格和引号可能预示着一个word的产生
 			if((c == ' ' || c == '\'' || c == '"') && !isInString() && dataBuff.length()>0){
-				//生成一个单词
-				resList.add(dataBuff.toString());
+				//生成一个word
+				if(c!=' ') {
+					dataBuff.append(c);
+				}
+				wordList.add(dataBuff.toString());
 				dataBuff = new StringBuffer();
+
 				continue;
 			}else if(isCompareSymbol(c)){
 				if(!isInString()){
 					if(dataBuff.length()>0){
 						//生成一个单词
-						resList.add(dataBuff.toString());
+						wordList.add(dataBuff.toString());
 						dataBuff = new StringBuffer();
 					}
-					int lastIdx =  resList.size()-1;
-					String preNode = resList.get(lastIdx);
-					
+					//查看前一个word是不是比较字符，如果是，则将当期比较字符追加上去
+					int lastIdx =  wordList.size()-1;
+					String preNode = wordList.get(lastIdx);
 					if(isCompareSymbol(preNode.charAt(0))){
-						resList.remove(lastIdx);
-						resList.add(preNode + c);
+						wordList.remove(lastIdx);
+						wordList.add(preNode + c);
 					}else{
-						resList.add(c+"");
+						wordList.add(c+"");
 					}
 					continue;
 				}
-			}else if(isBracketsSymbol(c)){
+			}else if(isBracketsSymbol(c)){//括弧单独成一个word
 				if(!isInString()){
-					resList.add(c+"");
+					wordList.add(c+"");
 					continue;
 				}
-			}else if (!isInString() && c == ' '){
-				//忽略空白字符
+			}else if (!isInString() && isWhiteSpace(c)){
+				//忽略非字符串内的空白字符
 				continue;
 			}
 			
 			if(stack.isEmpty() && isQuotationMarks(c)){
 				stack.push(c);
-			}else{
-				dataBuff.append(c);
 			}
+
+			dataBuff.append(c);
 			
 		}
 		//未结束的字符串，报错
 		if(isInString()){
 			String near = dataBuff.toString();
-			
-			int index = str.indexOf(near);
-			StringBuffer sb = new StringBuffer();
-			sb.append("Invalid query string:\r\n")
-			.append(str)
-			.append("\r\n");
-			for(int i = 0;i<index;i++){
-				sb.append(" ");
-			}
-			sb.append("\\\r\n");
-			for(int i = 0;i<index;i++){
-				sb.append(" ");
-			}
-			sb.append(" \\_ ");
-			sb.append("this is unbalanced (expect for " + stack.peek() + ")");
-			throw new InvalidQueryStringException(sb.toString());
+			String msg = ExceptionUtil.makeLQLErrorMsg(lql,near,stack.peek()+"");
+			throw new InvalidLQLException(msg);
 		}
 		
 		if(dataBuff.length()>0){
-			resList.add(dataBuff.toString());
+			wordList.add(dataBuff.toString());
 		}
 		
 	}
-	
+
+	private boolean isWhiteSpace(char c) {
+		return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+	}
+
 	private boolean isInString(){
 		return !stack.isEmpty();
 	}
@@ -119,8 +130,8 @@ public class TextNodeParser {
 		return (c == '\'' || c == '"');
 	}
 	
-	public List<String> getTextList() {
-		return resList;
+	public WordList getWordList() {
+		return new WordList(wordList);
 	}
 
 	

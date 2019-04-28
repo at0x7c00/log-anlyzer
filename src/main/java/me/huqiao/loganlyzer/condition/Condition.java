@@ -1,5 +1,6 @@
 package me.huqiao.loganlyzer.condition;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,20 @@ import me.huqiao.loganlyzer.enumtype.RelationType;
 import me.huqiao.loganlyzer.main.AttPreProcessor;
 import me.huqiao.loganlyzer.main.FileScaner;
 
+/**
+ * where (...) 所有的条件构成一个condition,relationType为and，isBag为true <br/>
+ * and a = 1 构成一个condition,relationType为and，isBag为false<br/>
+ * condition与condition之间的结果都以relationType标志进行&&或者||运算<br/>
+ * 当isBag是true时，check的时候，需要看child中的条件<br/>
+ * 从LQL(log query language)角度来看，所有的括弧表示一个bag，第一级也都是bag。
+ * where
+ * a = 0
+ * and b = 1
+ * or (
+ *    c = 2
+ *    and d = 3
+ * )
+ */
 public class Condition {
 
 	private CompareType type;
@@ -21,6 +36,7 @@ public class Condition {
 	private Integer propIndex;
 	
 	private List<Condition> child;
+
 	private RelationType relationType = RelationType.and;
 	private boolean isBag;
 	
@@ -101,22 +117,24 @@ public class Condition {
 	}
 	public boolean check(String line,FileScaner fileScaner) {
 		if(isBag()){
-			boolean totalResult = isAndRelation();
-			if(child!=null){
-				for(Condition c : child){
-					boolean cResult = c.check(line,fileScaner);
-					if(isAndRelation()){
-						totalResult = totalResult && cResult;
-					}else{
-						totalResult = totalResult || cResult;
-					}
-				}
-				return totalResult;
+			if(child!=null && !child.isEmpty()){
+                Condition child0 = child.get(0);
+                boolean res = child0.check(line,fileScaner);
+                for(int i = 1;i<child.size();i++){
+                    Condition childX = child.get(i);
+                    boolean childXRes = childX.check(line,fileScaner);
+                    if(childX.isAndRelation()){
+                        res = res && childXRes;
+                    }else{
+                        res = res || childXRes;
+                    }
+                }
+                return res;
 			}else{
 				return true;
 			}
 		}else{
-			String value = getPropValue(line);
+			String value = getPropValue(line,fileScaner);
 			value = fileScaner.preProcess(value, propIndex);
 			if(processor!=null){
 				value = processor.process(value);
@@ -126,8 +144,8 @@ public class Condition {
 		}
 	}
 	
-	private String getPropValue(String line){
-		String[] atts = line.split(FileScaner.spider);
+	private String getPropValue(String line, FileScaner fileScaner){
+		String[] atts = line.split(fileScaner.getSpider());
 		String value = atts[propIndex];
 		return value;
 	}
@@ -142,4 +160,28 @@ public class Condition {
 	private boolean isAndRelation(){
 		return relationType == RelationType.and;
 	}
+
+	public void and(Condition condition){
+        condition.setRelationType(RelationType.and);
+        child.add(condition);
+    }
+
+    public void or(Condition condition){
+        condition.setRelationType(RelationType.or);
+        child.add(condition);
+    }
+
+    @Override
+    public String toString() {
+
+        if(isBag()){
+            StringBuffer sb = new StringBuffer();
+            for(Condition con : getChild()){
+                sb.append(" ").append(con.getRelationType()).append(" (").append(con.toString()).append(")");
+            }
+            return sb.toString();
+        }else{
+            return propIndex  + " " + getType() + " " + pattern +   (pattern2 == null ? "" : "," + pattern2);
+        }
+    }
 }

@@ -23,7 +23,7 @@ public class FileScaner {
 
 	final static Logger log = Logger.getLogger(FileScaner.class.getName());
 	
-	public static String spider = " ";
+	public String spider = " ";
 	/* file to scan  */
 	private Set<File> fs;
 	/**
@@ -141,7 +141,16 @@ public class FileScaner {
 		}
 		return this;
 	}
-	
+
+	public FileScaner orderBy(List<OrderBy>orderBys){
+		if(orderBys!=null){
+			for(OrderBy orderBy : orderBys){
+				this.orderBys.add(orderBy);
+			}
+		}
+		return this;
+	}
+
 	public FileScaner limit(Integer limit){
 		this.limit = limit;
 		return this;
@@ -345,5 +354,17 @@ public class FileScaner {
 			return true;
 		}
 		return condition.check(line,this);
+	}
+
+	public void splitBy(String splitBy) {
+		this.spider = splitBy;
+	}
+
+	public String getSpider() {
+		return spider;
+	}
+
+	public void setSpider(String spider) {
+		this.spider = spider;
 	}
 }

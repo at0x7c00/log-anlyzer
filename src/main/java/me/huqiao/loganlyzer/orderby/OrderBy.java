@@ -31,5 +31,9 @@ public class OrderBy {
 	public static OrderBy asc(Integer index){
 		return new OrderBy(index,OrderByDirection.asc);
 	}
-	
+
+	@Override
+	public String toString() {
+		return propIndex + " " + direction;
+	}
 }

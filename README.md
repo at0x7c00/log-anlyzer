@@ -7,6 +7,7 @@
 - 支持对统计结果的排序
 - 使用Limit控制输出数量
 - 可同时处理多个文件，支持文件名通配符
+- [New]支持查询语句，LQL（Log query language）
 
 
 ## 按空格split ##
@@ -248,3 +249,39 @@ orderBy中可以有多个排序，排序的index和groupBy同理，是只选择�
 [2019-03-15 16:32, 14.0]
 ```
 
+## LQL：查询语句 ##
+例如：
+```bash
+select 0,2,3 
+from 'localhost_access_log.txt,localhost_access_log02.txt'
+where 0 eq 'x' and (2 eq 'x'  or 3 eq 'x') 
+order by 0 desc, 1 asc 
+group by 0 limit 10
+```
+
+实现原理：
+* TextNodeParser复制将字符串分解为word组，重点是支持引号（单引号或双引号），引号内的字符会被当成一个word
+* LogQueryLanguageParserStateMachine状态机中包含一些节点，这些节点之间的关系已经在StatusNodeFactory中预定义好了
+* 遍历TextNodeParser生成的word组，feed状态机，状态机会自动切换状态节点。每个节点也会根据自己身的情况来解析当前的word
+* AbstractNode是所有节点的基类，实现了大部分通用功能，包括判断是否是关键字、以及一些通用的断言
+
+支持的比较方式
+* 大于等于：<code>>=</code>或者<code>ge</code>
+* 等于：<code>=</code>或者<code>eq</code>
+* 不等于：<code>!=</code>或者<code>ne</code>
+* 小于等于：<code><=</code>或者<code>le</code>
+* 小于：<code><</code>或者<code>lt</code>
+* 区间：<code>between</code>
+* 包含：<code>contains</code>或者<code>like</code>
+* 不包含：<code>notcontains</code>
+* startwith:<code>startwith</code>
+* notstartwith:<code>notcontains</code>
+* 正则表达式：<code>regex</code>
+  
+> 暂不支持<code>not</code>!
+         
+
+         
+        
+        
+        
