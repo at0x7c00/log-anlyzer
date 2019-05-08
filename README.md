@@ -7,7 +7,7 @@
 - [支持对统计结果的排序](#排序)
 - 使用Limit控制输出数量
 - [可同时处理多个文件，支持文件名通配符](#初始化)
-- 支持查询语句，Log query language,LQL
+- [支持查询语句，Log query language,LQL](#log-query-languagelql日志查询语句)
 
 ## TODO List ##
 * 选择整行
