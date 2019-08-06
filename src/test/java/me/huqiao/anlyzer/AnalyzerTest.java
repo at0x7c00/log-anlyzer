@@ -34,7 +34,7 @@ public class AnalyzerTest {
 	@Before
 	public void init(){
 		scaner = new FileScaner(
-				"D:\\项目日志分析\\dongxu\\localhost_access_log.2019-03-21.txt");
+				"D:\\项目日志分析\\***\\localhost_access_log.2019-03-21.txt");
 	}
 
 
