@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.huqiao.loganlyzer.enumtype.OrderByDirection;
+import me.huqiao.loganlyzer.orderby.Convertor;
 import me.huqiao.loganlyzer.orderby.OrderBy;
 
 public class LineResultBean implements Comparable<LineResultBean> {
@@ -26,6 +27,11 @@ public class LineResultBean implements Comparable<LineResultBean> {
 				Comparable otherProp = o.getProp(orderBy.getPropIndex());
 				if(thisProp == null || otherProp == null){
 					break;
+				}
+				Convertor convertor = orderBy.getConvertor();
+				if(convertor!=null && (thisProp instanceof String) && otherProp instanceof String){
+					thisProp = convertor.doConvert((String)thisProp);;
+				    otherProp = convertor.doConvert((String)otherProp);;
 				}
 				compareRes = thisProp.compareTo(otherProp);
 				if(compareRes!=0){

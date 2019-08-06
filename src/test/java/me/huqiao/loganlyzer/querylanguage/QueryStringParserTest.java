@@ -1,4 +1,4 @@
-package me.huqiao.anlyzer.querylanguage;
+package me.huqiao.loganlyzer.querylanguage;
 
 import me.huqiao.loganlyzer.querylanguage.LogQueryLanguageParserStateMachine;
 import me.huqiao.loganlyzer.querylanguage.exception.InvalidLQLException;

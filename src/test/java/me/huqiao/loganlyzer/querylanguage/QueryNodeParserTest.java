@@ -1,4 +1,4 @@
-package me.huqiao.anlyzer.querylanguage;
+package me.huqiao.loganlyzer.querylanguage;
 
 import me.huqiao.loganlyzer.querylanguage.TextNodeParser;
 import me.huqiao.loganlyzer.querylanguage.WordList;

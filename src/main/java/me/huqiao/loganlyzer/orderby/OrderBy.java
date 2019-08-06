@@ -6,6 +6,7 @@ public class OrderBy {
 
 	private Integer propIndex;
 	private OrderByDirection direction;
+	private Convertor convertor;
 	
 	public OrderBy(Integer propIndex, OrderByDirection direction) {
 		this.propIndex = propIndex;
@@ -31,9 +32,25 @@ public class OrderBy {
 	public static OrderBy asc(Integer index){
 		return new OrderBy(index,OrderByDirection.asc);
 	}
-
+	
+	public OrderBy asInteger(){
+		convertor = new IntegerConvertor();
+		return this;
+	}
+	
+	public OrderBy asDouble(){
+		convertor = new DoubleConvertor();
+		return this;
+	}
+	public void as(Convertor convertor){
+		this.convertor = convertor;
+	}
 	@Override
 	public String toString() {
 		return propIndex + " " + direction;
 	}
+	public Convertor getConvertor() {
+		return convertor;
+	}
+	
 }
