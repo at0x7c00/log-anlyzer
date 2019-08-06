@@ -300,7 +300,7 @@ limit 10
 - 平均响应时间最慢TOP50
 - 并发请求量
 
-详见[源码](./src/test/java/me/huqiao/anlyzer/example/Examples.java)。
+详见[源码](./src/test/java/me/huqiao/loganlyzer/example/Examples.java)。
         
         
         
