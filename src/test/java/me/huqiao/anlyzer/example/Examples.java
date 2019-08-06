@@ -101,7 +101,7 @@ public class Examples {
 		return str;
 	}
 	
-	static String file = "D:\\项目系统日志\\sunac\\localhost_access_log.2019-08-05.txt";
+	static String file = "D:\\********\\localhost_access_log.2019-08-05.txt";
 	
 	/**
 	 * 某个地址的请求量
