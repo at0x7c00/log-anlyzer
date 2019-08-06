@@ -8,6 +8,7 @@
 - 使用Limit控制输出数量
 - [可同时处理多个文件，支持文件名通配符](#初始化)
 - [支持查询语句，Log query language,LQL](#log-query-languagelql日志查询语句)
+- [Examples-示例](#Examples示例程序)
 
 ## TODO List ##
 * 选择整行
@@ -289,7 +290,16 @@ limit 10
 > 暂不支持<code>not</code>!
          
 
-         
+## Examples 示例程序 ##
+- 某个地址的请求量
+- 最慢响应时间TOP50
+- 每分钟平均响应时长
+- 每分钟请求并发量
+- 用户请求数统计 & 总体活跃用户数
+- 访问次数最多的地址
+- 平均响应时间最慢TOP50
+- 并发请求量
+详见[源码](./src/main/test/me/huqiao/loganlyzer/example/Examples.java)。
         
         
         
