@@ -299,7 +299,8 @@ limit 10
 - 访问次数最多的地址
 - 平均响应时间最慢TOP50
 - 并发请求量
-详见[源码](./src/main/test/me/huqiao/loganlyzer/example/Examples.java)。
+
+详见[源码](./src/main/test/me/huqiao/loganlyzer/example)。
         
         
         
